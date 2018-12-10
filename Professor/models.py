@@ -30,6 +30,7 @@ class ProfessorProfile(models.Model):
 class Course(models.Model):
 	name = models.CharField(max_length=100, null=False, blank=False)
 	code = models.CharField(max_length=100, null=False, blank=False)
+	
 
 	def __str__(self):
 		return str(self.name) + ' --> ' + str(self.code)
@@ -37,6 +38,7 @@ class Course(models.Model):
 class CourseProfessor(models.Model):
 	professor = models.ForeignKey(ProfessorProfile, on_delete=models.SET_NULL, null=True, blank=True)
 	course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True)
+	show_others = models.BooleanField(default=False)
 
 	def __str__(self):
 		return str(self.professor.user.user.username) + ' --> ' + str(self.course.name)

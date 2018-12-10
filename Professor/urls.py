@@ -23,6 +23,11 @@ urlpatterns = [
 		url(r'^quiz-result-pdf/(?P<quiz_id>\d+)/$', views.quiz_result_pdf, name='quiz-result-pdf'),
 		url(r'^quiz-result-csv/(?P<quiz_id>\d+)/$', views.quiz_result_csv, name='quiz-result-csv'),
 
+		url(r'^allow/$', views.Allow, name='allow'),
+		url(r'^not_allow/$', views.NotAllow, name='not_allow'),
+
+
+
 		url(r'^test/$', views.test, name='test'),
 
 	]

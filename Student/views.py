@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, HttpResponseRedirect, HttpResponse, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.urlresolvers import reverse
 from .models import *
@@ -26,9 +26,27 @@ def dashboard(request):
 @login_required(login_url=login_url)
 def profile(request, student_id):
     try:
-        results = QuizResult.objects.filter(student__user__user__id=student_id).order_by('-conduct_quiz__conduction_date')
+        oresults = QuizResult.objects.filter(student__user__user__id=student_id).order_by('-conduct_quiz__conduction_date')
         student_profile = StudentProfile.objects.get(user__user__id=student_id)
         courses = CourseStudent.objects.filter(student__user__user__id=student_id)
+
+        results = []
+        for result in oresults:
+            c = result.conduct_quiz.quiz.course.id
+            cp = CourseProfessor.objects.filter(course__id=c).first()
+            print(cp.show_others, cp.professor.user.user.username, request.user.username)
+            if (cp.professor.user.user.username==request.user.username):
+                results.append(result)
+            if not(cp.show_others):
+                results.append(result)
+
+        print (results)
+
+
+
+        # for course in courses:
+        #     if get_object_or_404(CourseProfessor, course=course.course).show_others:
+        #         l.append(course)
 
         meetings = MeetingPlace.objects.filter(meeting__student__user__user__id=student_id)
 

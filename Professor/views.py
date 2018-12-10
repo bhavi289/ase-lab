@@ -150,7 +150,7 @@ def create_quiz(request):
         Takes only request as input
         if GET request then render the web page for adding a poll. If POST request, add data entries into database and user is redirected to professor dashboard
     '''
-    if request.method == 'GET':
+    if request.method == 'GET': 
         course_list = CourseProfessor.objects.filter(professor__user__user__username=request.user.username)
         return render(request, 'Professor/create-quiz.html', {'course_list': course_list})
 
@@ -347,6 +347,9 @@ def show_all_quiz(request):
             all_quiz_list = Quiz.objects.filter(professor__user__user__username=request.user.username).order_by('-id')
             finished_quiz_list = ConductQuiz.objects.filter(quiz__professor__user__user__username=request.user.username, active=False).order_by('-id')
             active_quiz_list = ConductQuiz.objects.filter(quiz__professor__user__user__username=request.user.username, active=True).order_by('-id')
+            courses = CourseProfessor.objects.filter(professor__user__user__id=request.user.id)
+
+            print ("Courses are ", courses)
 
             for quiz in active_quiz_list:
                 quiz.submissions = QuizResult.objects.filter(conduct_quiz=quiz).count()
@@ -356,7 +359,7 @@ def show_all_quiz(request):
                 quiz.submissions = QuizResult.objects.filter(conduct_quiz=quiz).count()
                 quiz.total = CourseStudent.objects.filter(course=quiz.quiz.course).count()
 
-            return render(request, 'Professor/quiz.html', {"all_quiz_list": all_quiz_list, "finished_quiz_list": finished_quiz_list, "active_quiz_list": active_quiz_list})
+            return render(request, 'Professor/quiz.html', {"all_quiz_list": all_quiz_list, "finished_quiz_list": finished_quiz_list, "active_quiz_list": active_quiz_list, "courses":courses})
         except Exception as e:
             print('error is', e)
             messages.warning(request, "There was an error displaying Quizzes. Please Try Again.")
@@ -477,12 +480,12 @@ def quiz_result_csv(request, quiz_id):
         quiz_statistics = QuizStatistics.objects.get( quiz_id__id=quiz_id)
         quiz_results = QuizResult.objects.filter(conduct_quiz__id=quiz_id).order_by('-marks_obtained')
         rows = list()
-        rows.append(['Rank', 'Student ID', 'Name', 'Marks', 'Status'])
+        rows.append(['Rank', 'Student ID', 'Name', 'Marks (out of '+str(conducted_quiz.quiz.max_marks)+')', 'Status'])
         for i in range(len(quiz_results)):
             if quiz_results[i].marks_obtained >= conducted_quiz.quiz.pass_marks:
-                rows.append([str(i+1), str(quiz_results[i].student.user.user.id), str(quiz_results[i].student.user.user.first_name)+' '+str(quiz_results[i].student.user.user.last_name), str(quiz_results[i].marks_obtained)+'/'+str(conducted_quiz.quiz.max_marks), 'Pass'])
+                rows.append([str(i+1), str(quiz_results[i].student.user.user.id), str(quiz_results[i].student.user.user.first_name)+' '+str(quiz_results[i].student.user.user.last_name), str(quiz_results[i].marks_obtained), 'Pass'])
             else:
-                rows.append([str(i+1), str(quiz_results[i].student.user.user.id), str(quiz_results[i].student.user.user.first_name)+' '+str(quiz_results[i].student.user.user.last_name), str(quiz_results[i].marks_obtained)+'/'+str(conducted_quiz.quiz.max_marks), 'Fail'])
+                rows.append([str(i+1), str(quiz_results[i].student.user.user.id), str(quiz_results[i].student.user.user.first_name)+' '+str(quiz_results[i].student.user.user.last_name), str(quiz_results[i].marks_obtained), 'Fail'])
         pseudo_buffer = Echo()
         writer = csv.writer(pseudo_buffer)
         response = StreamingHttpResponse((writer.writerow(row) for row in rows), content_type="text/csv")
@@ -513,3 +516,27 @@ def test(request):
     for user in all_users:
         user.set_password('qwerty')
         user.save()
+
+def Allow(request):
+    if request.is_ajax():
+        try:
+            course_id = request.POST.get('id')
+            course = get_object_or_404(CourseProfessor, id=course_id)
+            course.show_others = True
+            course.save()
+            return HttpResponse("success")
+        except:
+            return HttpResponse("Fail")
+        print(course_id, "mms")
+
+def NotAllow(request):
+    if request.is_ajax():
+        try:
+            course_id = request.POST.get('id')
+            course = get_object_or_404(CourseProfessor, id=course_id)
+            course.show_others = False
+            course.save()
+            return HttpResponse("success")
+        except:
+            return HttpResponse("Fail")
+        print(course_id, "mms")

@@ -69,6 +69,49 @@
                                 </div>
                             </div>
                             {% endif %}
+
+                            <div class="col-md-12 col-xs-12">
+                        {% if courses %}
+                        <div class="card meeting-card border-primary">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-md-9 col-xs-12">Allow Marks to be Viewed by others</div>
+                                    <div class="col-md-3 col-xs-12"></div>
+                                </div>
+                            </div>
+                        {% for course in courses %}
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-md-8 col-xs-12"><small class="text-muted">{{course.course.name}}</small></div>
+                                    {% if not course.show_others %}
+                                    <div class="col-md-2 col-xs-12"><i class="fa fa-check" style="color:green" onclick="allow({{course.id}})"></i></div>
+                                    {% else %}
+                                    <div class="col-md-2 col-xs-12"><i class="fa fa-times" style="color: red;" onclick="not_allow({{course.id}})")></i></div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        </div>
+                        {% else %}
+                        <div class="card meeting-card border-primary">
+                            <div class="card-header">
+                              <div class="row">
+                                  <div class="col-md-9 col-xs-12">Todays' Meetings</div>
+                                  <div class="col-md-3 col-xs-12"><a href="{% url 'Meeting:index' %}"><button type="button" class="btn btn-info btn-sm">View All</button></a></div>
+                              </div>
+                            </div>
+                            <div class="card-image">
+                                <img src="{% static 'images/avatar/student.png' %}" class="student-avatar">
+                            </div>
+                            <div class="card-body no-meeting">
+                                No Meetings Today
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -307,6 +350,50 @@
 {% block scripts %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script>
+  function allow(id){
+    if (confirm("Are you sure you want to disallow ")) {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'Professor:allow'%}",
+            data: { "id": id, "csrfmiddlewaretoken": '{{ csrf_token }}' },
+            success: function (data) {
+                console.log(data);
+                if (data === 'success') {
+                    alert("Only you wil be able to see your students performance")
+                    location.reload();
+                    // console.log($("input.exam-id-for-subject").val());
+                }
+                else {
+                    alert("Operation Failed. There is probably an error with your Internet Connection. Try again in a few minutes");
+                }
+            }
+        });
+    }
+  }
+
+  function not_allow(id){
+    if (confirm("Are you sure you want to allow ")) {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'Professor:not_allow'%}",
+            data: { "id": id, "csrfmiddlewaretoken": '{{ csrf_token }}' },
+            success: function (data) {
+                console.log(data);
+                if (data === 'success') {
+                    alert("Everyone can see your students performance")
+                    location.reload();
+                    // console.log($("input.exam-id-for-subject").val());
+                }
+                else {
+                    alert("Operation Failed. There is probably an error with your Internet Connection. Try again in a few minutes");
+                }
+            }
+        });
+    }
+  }
+</script>
 
     <script>
 
