@@ -1,0 +1,132 @@
+.body-section{
+    margin-top: 1%;
+}
+
+.meeting-card{
+    max-height: 450px;
+}
+
+.list-card{
+    max-height: 400px;
+    margin-bottom: 20px
+}
+
+.card-image{
+    align-items: center;
+    align-content: center;
+    text-align: center;
+}
+
+.student-avatar{
+    height: 5vh;
+    width: 5vh;
+}
+
+.card-data {
+    background-color: rgb(107, 104, 102);
+}
+
+.header-text{
+    float: left;
+}
+
+.header-button{
+    float: right;
+}
+
+.meeting-title .doubt-title{
+    font-weight: bold;
+}
+
+.meeting-body{
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.no-meeting{
+    text-align: center;
+    vertical-align: middle;
+}
+
+.poll-card{
+    margin-top: 2%;
+}
+
+.doubt-card{
+    margin-top: 2%;
+}
+
+.broad-card{
+    padding-top: 2%;
+}
+
+.list{
+    overflow-y: scroll;
+    height: 300px;
+}
+
+.quiz-card{
+    height: 300px;
+}
+
+.quiz-card-body{
+    max-height: 150px;
+}
+
+.active-quiz-card{
+    max-height: 85vh;
+}
+
+.quiz-draft-card-body{
+    max-height: 200px;
+}
+
+.info-right {
+    float: right;
+}
+
+.meeting-card-body{
+    max-height: 30vh;
+}
+
+.all-meeting-card{
+    /* max-height: 80vh; */
+    margin-bottom: 20px;
+}
+
+.question-response-count{
+    color: black;
+}
+
+.question-response-count:hover{
+    text-decoration: underline;
+    cursor: pointer;
+    color: black;
+}
+
+.student-profile-avatar{
+    height: 10vh;
+    width: 40%;
+}
+
+.tooltiptext{
+    transition: 1s;
+}
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 10vh;
+    height: 10vh;
+    animation: spin 2s linear infinite;
+ }
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.hide-loader{
+display:none;
+}
